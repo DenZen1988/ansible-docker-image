@@ -7,6 +7,8 @@
   * [Uploading the image](#uploading-the-image)
   * [Using the built image](#using-the-built-image)
 * [Using the pre-uploaded image](#using-the-pre-uploaded-image)
+* [Using the ansible-wrapper script](#using-the-ansible-wrapper-script)
+* [Versioning](#versioning)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -31,6 +33,7 @@ The following collections are included by now:
 * netbox.netbox
 
 I included them on the base of "do I need them or not?".
+
 If you need more collections feel free to add them and create a PR - see [Contributing](#contributing)!
 
 ## Self building the image & using it
@@ -102,6 +105,35 @@ docker run -it --rm \
     d3niswalth3r/ansible-docker:3.13.1 \
     ansible-playbook -i inventory/ playbooks/site.yml --check
 ```
+
+## Using the ansible-wrapper script
+
+The ansible wrapper script will create symlinks in the defined bin folder for each binary of ansible.
+With those you can simply run the. commands `ansible-playbook` or `ansible-vault` without the long docker command.
+
+The setup is pretty straightforward:
+
+* Copy the script to a folder in your `$PATH` and ensure it has executable permissions
+* Setup the config in your `$HOME` or copy the `ansible-wrapper.conf.example` to `~/.ansible-wrapper.conf`
+* Run it with its name: `ansible-wrapper` - the script will set everything up for you
+* Now you can run the following commands without a long docker command:
+  * ansible
+  * ansible-builder
+  * ansible-community
+  * ansible-config
+  * ansible-console
+  * ansible-creator
+  * ansible-doc
+  * ansible-galaxy
+  * ansible-inventory
+  * ansible-lint
+  * ansible-navigator
+  * ansible-playbook
+  * ansible-pull
+  * ansible-runner
+  * ansible-sign
+  * ansible-test
+  * ansible-vault
 
 ## Versioning
 
