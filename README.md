@@ -135,6 +135,21 @@ The setup is pretty straightforward:
   * ansible-test
   * ansible-vault
 
+### Example
+
+```bash
+$:> ansible --version
+ansible [core 2.20.3]
+  config file = /ansible/ansible.cfg
+  configured module search path = ['/ansible/plugins/modules']
+  ansible python module location = /opt/ansible-venv/lib/python3.13/site-packages/ansible
+  ansible collection location = /opt/ansible-venv/collections
+  executable location = /opt/ansible-venv/bin/ansible
+  python version = 3.13.12 (main, Mar 16 2026, 23:05:06) [GCC 14.2.0] (/opt/ansible-venv/bin/python3)
+  jinja version = 3.1.6
+  pyyaml version = 6.0.3 (with libyaml v0.2.5)
+```
+
 ## Versioning
 
 The versioning follows a simple pattern:
