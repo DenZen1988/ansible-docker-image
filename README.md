@@ -8,6 +8,7 @@
   * [Using the built image](#using-the-built-image)
 * [Using the pre-uploaded image](#using-the-pre-uploaded-image)
 * [Using the ansible-wrapper script](#using-the-ansible-wrapper-script)
+  * [Example](#example)
 * [Versioning](#versioning)
 * [Contributing](#contributing)
 * [License](#license)
