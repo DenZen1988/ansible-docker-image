@@ -10,15 +10,98 @@
 * [Contributing](#contributing)
 * [License](#license)
 
+## Included collections
+
+The following collections are included by now:
+
+* ansible.netcommon
+* ansible.posix
+* ansible.utils
+* cisco.nxos
+* community.docker
+* community.general
+* community.grafana
+* community.hashi_vault
+* community.network
+* community.postgresql
+* community.rabbitmq
+* dellemc.openmanage
+* juniper.device
+* kubernetes.core
+* netbox.netbox
+
+I included them on the base of "do I need them or not?".
+If you need more collections feel free to add them and create a PR - see [Contributing](#contributing)!
+
 ## Self building the image & using it
 
 ### Building the image
 
+To build the image, simply run this command:
+
+```bash
+docker build -t local-imagename:tagname .
+```
+
+Or if you plan to push it to a registry:
+
+```bash
+docker build -t registry/imagename:tagname .
+```
+
 ### Uploading the image
+
+After building the image, you can push it to a registry like this:
+
+```bash
+docker push registry/imagename:tagname
+```
 
 ### Using the built image
 
+You can use the image locally like this:
+
+```bash
+docker run -it --rm --name ansible local-imagename:tagename
+```
+
+Or after pushing it to a registry:
+
+```bash
+docker run -it --rm --name ansible registry/imagename:tagname
+```
+
 ## Using the pre-uploaded image
+
+### Simple Test
+
+To test if the image works, you can run this command:
+
+```bash
+docker run -it --rm --name ansible \
+    d3niswalth3r/ansible-docker:3.13.1 ansible --version
+```
+
+### Advanced Usage
+
+For advanced usage, like running playbooks and using `ansible-vault` it is highly recommended to use
+a wrapper script or run the container like this (ensure the variables are defined, of course):
+
+```bash
+docker run -it --rm \
+    --name "ansible-$(date +%s || true)" \
+    -e "USER=${USER}" \
+    -e "ANSIBLE_USER=${USER}" \
+    -e "ANSIBLE_REMOTE_USER=${USER}" \
+    -e "ANSIBLE_REMOTE_TEMP=/var/tmp/.ansible-${USER}/tmp" \
+    -e "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" \
+    -v "${HOME}/.ssh:/root/.ssh:ro" \
+    -v "${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}" \
+    -v "${ANSIBLE_REPO_PATH}:/ansible" -w /ansible \
+    -v "${ANSIBLE_ROLES_PATH}:/ansible_roles" \
+    d3niswalth3r/ansible-docker:3.13.1 \
+    ansible-playbook -i inventory/ playbooks/site.yml --check
+```
 
 ## Versioning
 
