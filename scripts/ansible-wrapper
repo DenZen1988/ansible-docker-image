@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+# Script to run ansible within a docker container
+# 2026-04-07 -- walther_denis@gmx.de
+
+# Settings
+BIN_DIR="${HOME}/bin"
+# Get the name the script was called as
+CALLER_NAME=$(basename "$0")
+
+# Define the tools we want to link
+LINKS=(
+    ansible ansible-builder ansible-community ansible-config
+    ansible-console ansible-creator ansible-doc ansible-galaxy
+    ansible-inventory ansible-lint ansible-navigator ansible-playbook
+    ansible-pull ansible-runner ansible-sign ansible-test ansible-vault
+)
+
+# Read config
+if [[ -f "${HOME}/.ansible-wrapper.conf" ]]; then
+    # shellcheck disable=SC1091
+    source "${HOME}/.ansible-wrapper.conf"
+    else
+    echo "No config found in ${HOME}. Please ensure to create '${HOME}/.ansible-wrapper.conf' with the following values:"
+    echo ''
+    echo 'IMAGE_VERSION=X.XX.X -- should be latest'
+    echo 'IMAGE_NAME=registry/image_name -- e.g. hub.docker.com/ansible-docker'
+    echo 'BIND_DIR=/your/desired/bin/dir -- defaults to ~/bin'
+    echo 'ANSIBLE_REPO_PATH=/your/path/to/your/ansible_repo -- full path without ~'
+    echo 'ANSIBLE_ROLES_PATH=/your/path/to/your/ansible_roles -- full path without ~'
+    echo ''
+fi
+
+# SETUP MODE: Run this if the script is called by its original name
+if [[ "${CALLER_NAME}" == "ansible-wrapper" ]]; then
+    echo "Initializing symlinks in ${BIN_DIR}..."
+    for LINK in "${LINKS[@]}"; do
+        TARGET="${BIN_DIR}/${LINK}"
+        if [[ ! -L "${TARGET}" ]]; then
+            ln -s "ansible-wrapper" "${TARGET}"
+            echo "Created symlink: ${LINK} -> ansible-wrapper"
+        else
+            echo "Skipping: ${LINK} already exists."
+        fi
+    done
+    exit 0
+fi
+
+# EXECUTION MODE: Run if called as 'ansible', 'ansible-playbook', etc.
+# shellcheck disable=SC2154
+/usr/local/bin/docker run -it --rm \
+    --name "ansible-$(date +%s || true)" \
+    -e "USER=${USER}" \
+    -e "ANSIBLE_USER=${USER}" \
+    -e "ANSIBLE_REMOTE_USER=${USER}" \
+    -e "ANSIBLE_REMOTE_TEMP=/var/tmp/.ansible-${USER}/tmp" \
+    -e "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" \
+    -v "${HOME}/.ssh:/root/.ssh:ro" \
+    -v "${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}" \
+    -v "${ANSIBLE_REPO_PATH}:/ansible" -w /ansible \
+    -v "${ANSIBLE_ROLES_PATH}:/ansible_roles" \
+    "${IMAGE_NAME}":"${IMAGE_VERSION}" \
+    "${CALLER_NAME}" "$@"

@@ -1,0 +1,17 @@
+---
+collections:
+  - name: ansible.netcommon
+  - name: ansible.posix
+  - name: ansible.utils
+  - name: cisco.nxos
+  - name: community.docker
+  - name: community.general
+  - name: community.grafana
+  - name: community.hashi_vault
+  - name: community.network
+  - name: community.postgresql
+  - name: community.rabbitmq
+  - name: dellemc.openmanage
+  - name: juniper.device
+  - name: kubernetes.core
+  - name: netbox.netbox

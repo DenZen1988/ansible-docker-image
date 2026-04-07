@@ -1,0 +1,5 @@
+BIN_DIR="${HOME}/bin"
+IMAGE_NAME='d3niswalth3r/ansible-docker'
+IMAGE_VERSION='3.13.1'
+ANSIBLE_REPO_PATH="/path/to/your/ansible_repo"
+ANSIBLE_ROLES_PATH="/path/to/your/ansible_roles"

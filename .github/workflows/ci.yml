@@ -1,0 +1,72 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [main, master, default]
+  pull_request:
+    branches: [main, master, default]
+  schedule:
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  markdownlint:
+    name: Markdown-Lint
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install markdownlint
+        run: |
+          sudo npm install -g markdownlint-cli
+      - name: Run markdownlint
+        run: markdownlint .
+  dockerlint:
+    name: Docker-Lint
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install hadolint
+        run: |
+          sudo wget -O /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/download/v2.8.0/hadolint-Linux-x86_64
+          sudo chmod +x /usr/local/bin/hadolint
+      - name: Run hadolint
+        run: hadolint Dockerfile
+  yamllint:
+    name: YAML-Lint
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install yamllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yamllint
+      - name: Run yamllint
+        run: yamllint .
+  shellcheck:
+    name: ShellCheck
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Run ShellCheck
+        run: find . -type f -name "*.sh" -exec shellcheck {} \;
+
+  ci-passed:
+    name: CI-Passed
+    runs-on: [self-hosted, linux, x64]
+    needs: [markdownlint, dockerlint, yamllint, shellcheck]
+    steps:
+      - name: CI Passed
+        run: echo "All checks passed successfully!"
