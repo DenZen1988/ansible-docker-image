@@ -1,5 +1,7 @@
 # Ansible Docker Image
 
+[![Pipelines](https://github.com/DenZen1988/ansible-docker-image/actions/workflows/ci.yml/badge.svg)](https://github.com/DenZen1988/ansible-nginx/actions/workflows/ci.yml)
+
 ## Table Of Content
 
 * [Self building the image & using it](#self-building-the-image--using-it)
